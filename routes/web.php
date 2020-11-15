@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\SanityMainRepoComponent;
+use App\Http\Livewire\SanityMainReposComponent;
+use App\Models\SanityMainRepo;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +23,6 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/sanity-main-repos', SanityMainReposComponent::class)->name('sanityMainRepos');
+Route::middleware(['auth:sanctum', 'verified'])->get('/sanity-main-repo/{sanityMainRepo}', SanityMainRepoComponent::class)->name('sanityMainRepo');
