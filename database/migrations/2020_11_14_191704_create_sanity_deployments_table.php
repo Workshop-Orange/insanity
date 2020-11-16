@@ -19,6 +19,7 @@ class CreateSanityDeploymentsTable extends Migration
             $table->string('title');
             $table->string('sanity_api_token');
             $table->string('sanity_project_id')->nullable();
+            $table->string('sanity_dataset')->default('insanity');
             $table->string('deployment_status')->default('undeployed');
             $table->string('deployment_message')->nullable();
 

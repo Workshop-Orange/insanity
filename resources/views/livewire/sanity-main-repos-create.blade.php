@@ -19,6 +19,11 @@
                           <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="git" placeholder="Enter Git URL" wire:model="git">
                           @error('git') <span class="text-red-500">{{ $message }}</span>@enderror
                       </div>
+                      <div class="mb-4">
+                        <label for="exampleFormControlInput3" class="block text-gray-700 text-sm font-bold mb-2">Git Branch:</label>
+                        <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="git" placeholder="Enter Git Branch" wire:model="branch">
+                        @error('branch') <span class="text-red-500">{{ $message }}</span>@enderror
+                    </div>
                   </div>
               </div>
               <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">

@@ -43,6 +43,13 @@
                                     {{ _("Sanity token not set") }}
                                 @endif
                             </div>
+                            <div class="text-sm italic {{$deployment->sanity_project_id ? 'text-green-500' : 'text-red-500'}}">
+                                @if($deployment->sanity_project_id)
+                                    {{ _("Sanity Project: " . $deployment->sanity_project_id) }}
+                                @else
+                                    {{ _("Sanity not detected") }}
+                                @endif
+                            </div>
                         </td>
                         <td class="border px-4 py-2">
                             <div class="font-bold {{ $engine->isDeploymentInProgress($deployment) ? "animate-pulse text-green-900" : ""  }}">

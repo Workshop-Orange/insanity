@@ -16,6 +16,15 @@ class SanityDeployment extends Model
     const STATUS_FAILED = 'failed';
     const STATUS_CANCELLED = 'cancelled';
 
+    const STATUSES = [
+        self::STATUS_NOT_DEPLOYMENT,
+        self::STATUS_PENDING_DEPLOYMENT,
+        self::STATUS_DEPLOYING,
+        self::STATUS_DEPLOYED,
+        self::STATUS_FAILED,
+        self::STATUS_CANCELLED
+    ];
+
     use HasFactory;
 
     protected $fillable = [
@@ -30,5 +39,20 @@ class SanityDeployment extends Model
     public function team()
     {
         return $this->belognsTo(Team::class);
+    }
+
+    public function getSanityProjectNameAttribute()
+    {
+        return config('app.insanityId') . ":" . $this->id . ":" . $this->title;
+    }
+
+    public function getSanityProjectNamePrefixAttribute()
+    {
+        return config('app.insanityId') . ":" . $this->id . ":";
+    }
+
+    public function getSanityStudioHostAttribute()
+    {
+        return config('app.insanityId') . '-studio-' . $this->sanity_project_id;
     }
 }

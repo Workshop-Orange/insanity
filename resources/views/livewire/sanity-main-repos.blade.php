@@ -41,7 +41,10 @@
                                 </a>
                             </div>
                             <div class="text-xs italic">
-                                Git: {{ $repo->git }}
+                                Git URL: {{ $repo->git }}
+                            </div>
+                            <div class="text-xs italic">
+                                Git Branch: {{ $repo->branch }}
                             </div>
                         </td>
                         <td class="border px-4 py-2">

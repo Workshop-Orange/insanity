@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Engines\SanityEngine;
+use App\Engines\SanityEngineApi;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +16,11 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(SanityEngine::class, function ($app) {
-            return new SanityEngine();
+            return new SanityEngine(config('app.insanityId'));
+        });
+
+        $this->app->bind(SanityEngineApi::class, function ($app) {
+            return new SanityEngineApi(config('app.insanityId'));
         });
     }
 

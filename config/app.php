@@ -230,5 +230,6 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
-
+    'insanityId' => env('INSANITY_UNIQUE_ID','insanity'),
+    'insanityDataset' => env('INSANITY_DATASET','insanity'),
 ];

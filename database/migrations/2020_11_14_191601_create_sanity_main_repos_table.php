@@ -18,6 +18,8 @@ class CreateSanityMainReposTable extends Migration
 
             $table->string('title');
             $table->string('git');
+            $table->string('branch');
+
             $table->foreignId('team_id')->constrained();
 
             $table->timestamps();

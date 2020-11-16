@@ -9,7 +9,7 @@ use App\Engines\SanityEngine;
 
 class SanityMainReposComponent extends Component
 {
-    public $repos, $title, $git, $sanity_main_repo_id;
+    public $repos, $title, $git, $branch, $sanity_main_repo_id;
     public $isOpen = 0;
 
     public function render()
@@ -37,6 +37,7 @@ class SanityMainReposComponent extends Component
     private function resetInputFields() {
         $this->title = '';
         $this->git = '';
+        $this->branch = '';
         $this->sanity_main_repo_id = '';
     }
 
@@ -47,11 +48,13 @@ class SanityMainReposComponent extends Component
         $this->validate([
             'title' => 'required',
             'git' => 'required',
+            'branch' => 'required',
         ]);
 
         SanityMainRepo::updateOrCreate(['id' => $this->sanity_main_repo_id], [
             'title' => $this->title,
             'git' => $this->git,
+            'branch' => $this->branch,
             'team_id' => $user->currentTeam->id
         ]);
 
@@ -82,6 +85,7 @@ class SanityMainReposComponent extends Component
         $this->sanity_main_repo_id = $id;
         $this->title = $repo->title;
         $this->git = $repo->git;
+        $this->branch = $repo->branch;
         $this->openModal();
     }
 

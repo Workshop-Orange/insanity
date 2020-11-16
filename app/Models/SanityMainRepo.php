@@ -11,7 +11,7 @@ class SanityMainRepo extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'git', 'team_id'
+        'title', 'git', 'branch', 'team_id'
     ];
 
     public function sanityDeployments()
