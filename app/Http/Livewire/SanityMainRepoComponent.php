@@ -17,6 +17,13 @@ class SanityMainRepoComponent extends Component
     public $isOpen = 0;
     protected $sanityEngine;
 
+    public function getListeners()
+    {
+        return [
+            "echo:sanityMainRepo.". $this->sanityMainRepo->id .",SanityDeploymentStatusChanged" => 'refreshDeployments',
+        ];
+    }
+
     public function mount(SanityMainRepo $sanityMainRepo)
     {
         $this->sanityMainRepo = $sanityMainRepo;
@@ -51,6 +58,12 @@ class SanityMainRepoComponent extends Component
         $this->sanity_deployment_id = '';
     }
 
+    public function refreshDeployments()
+    {
+        $this->sanityMainRepo->refresh();
+        $this->deployments = $this->sanityMainRepo->sanityDeployments;
+
+    }
 
     public function store()
     {
@@ -103,5 +116,6 @@ class SanityMainRepoComponent extends Component
     {
         SanityDeployment::find($id)->delete();
         session()->flash('message', 'Deployment Deleted Successfully.');
+        $this->sanityMainRepo->refresh();
     }
 }

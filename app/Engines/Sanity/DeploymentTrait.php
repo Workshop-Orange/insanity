@@ -2,6 +2,7 @@
 
 namespace App\Engines\Sanity;
 
+use App\Events\SanityDeploymentStatusChanged;
 use App\Engines\SanityEngineApi;
 use App\Models\SanityDeployment;
 use App\Models\SanityMainRepo;
@@ -15,16 +16,12 @@ use Illuminate\Support\Facades\Storage;
 trait DeploymentTrait {
   public function stageSanityDeployment(SanityDeployment $sanityDeployment)
   {
-    $sanityDeployment->deployment_status = SanityDeployment::STATUS_PENDING_DEPLOYMENT;
-    $sanityDeployment->deployment_message = __("Deployment staged at ") . Carbon::now();
-    $sanityDeployment->save();
+    $this->setDeploymentStatus($sanityDeployment, SanityDeployment::STATUS_PENDING_DEPLOYMENT, __("Deployment staged at ") . Carbon::now());
   }
 
   public function cancelSanityDeployment(SanityDeployment $sanityDeployment)
   {
-    $sanityDeployment->deployment_status = SanityDeployment::STATUS_CANCELLED;
-    $sanityDeployment->deployment_message = __("Deployment cancelled at ") . Carbon::now();
-    $sanityDeployment->save();
+    $this->setDeploymentStatus($sanityDeployment, SanityDeployment::STATUS_CANCELLED, __("Deployment cancelled at ") . Carbon::now());
   }
 
   public function isDeploymentInProgress(SanityDeployment $sanityDeployment)
@@ -65,15 +62,31 @@ trait DeploymentTrait {
     }
   }
 
-  public function setDeploymentStatus($sanityDeployment, string $status)
+  public function setDeploymentStatus($sanityDeployment, string $status, string $message = null)
   {
     if(! in_array($status, SanityDeployment::STATUSES)) {
       throw new SanityDeploymentInvalidStatus($status);
     }
-    $this->logAboutSanityDeployment($sanityDeployment, "Setting deployment status to '" . $status."'");
 
+    $triggerEvent = FALSE;
+    if($sanityDeployment->deployment_status != $status) {
+      $triggerEvent = TRUE;
+    }
+
+    $this->logAboutSanityDeployment($sanityDeployment, "Setting deployment status to '" . $status."'");
     $sanityDeployment->deployment_status = $status;
+
+    if($message) {
+      $this->logAboutSanityDeployment($sanityDeployment, $message);
+      $sanityDeployment->deployment_message = $status;
+    }
+
+    if($triggerEvent) {
+      event(new SanityDeploymentStatusChanged($sanityDeployment));
+    }
+
     $sanityDeployment->save();
+
     return $sanityDeployment;
   }
 
@@ -99,14 +112,30 @@ trait DeploymentTrait {
     $createDataset = ! $engineApi->doesProjectDatasetExistForDeployment($sanityDeployment);
     $deploymentConfigPath = $this->createDeploymentConfiguration($sanityDeployment, $createDataset);
     $path = Storage::path($deploymentConfigPath);
-    print $path . "\n";
+
+    $cwd = getcwd();
+    chdir("/Users/bryan/Projects/insanity/robo");
+
+    $cmd = "/Users/bryan/.composer/vendor/bin/robo sanity:deploy " . $path;
+    $process = proc_open($cmd, array(0 => STDIN, 1 => STDOUT, 2 => STDERR), $pipes);
+    $proc_status = proc_get_status($process);
+    $exit_code = proc_close($process);
+    chdir($cwd);
+
+    if($exit_code == 0) {
+      $this->setDeploymentStatus($sanityDeployment, SanityDeployment::STATUS_DEPLOYED);
+      return TRUE;
+    } else {
+      $this->setDeploymentStatus($sanityDeployment, SanityDeployment::STATUS_FAILED);
+      return FALSE;
+    }
 
     return TRUE;
   }
 
   public function createDeploymentConfiguration(SanityDeployment $sanityDeployment, $createDataset)
   {
-    $filename = 'sanityDeployments/' . $sanityDeployment->id . "_" . md5($sanityDeployment->title . $sanityDeployment->id) . ".json";
+    $filename = 'sanityDeployments/' . $sanityDeployment->id . "_" . md5($sanityDeployment->title . $sanityDeployment->id) . "-". uniqid().".json";
 
     $contents = [
       'metadata' => [
@@ -119,7 +148,9 @@ trait DeploymentTrait {
     $contents['deployment']['create_dataset'] = $createDataset;
 
     Storage::put($filename, json_encode($contents));
+    $path = Storage::path($filename);
 
+    $this->logAboutSanityDeployment($sanityDeployment, "Created deployment file: " . $path);
     return $filename;
   }
 
