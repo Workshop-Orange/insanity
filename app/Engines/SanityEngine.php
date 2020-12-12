@@ -14,8 +14,12 @@ class SanityEngine {
   use MainRepoTrait;
 
   protected $insanityId;
+  protected $roboPath;
+  protected $roboWorkingPath;
 
-  public function __construct($insanityId) {
-    $this->insanityId = $insanityId;
+  public function __construct($config) {
+    $this->insanityId = $config['insanityId'];
+    $this->roboPath = $config['roboli'];
+    $this->roboWorkingPath = $config['roboliwd'];
   }
 }

@@ -54,6 +54,12 @@ class SanityDeploymentCommand extends Command
             return;
         }
 
+        if ($this->option('force') && in_array($sanityDeployment->deployment_status, [
+                SanityDeployment::STATUS_DEPLOYING,
+            ])) {
+                $this->engine->setDeploymentStatus($sanityDeployment, SanityDeployment::STATUS_PENDING_DEPLOYMENT, "Resetting status");
+        }
+
         try {
             $this->info('Deploying ' . $sanityDeployment->title);
             if($this->engine->processDeployment($sanityDeployment)) {

@@ -43,16 +43,16 @@ class SanityDeployment extends Model
 
     public function getSanityProjectNameAttribute()
     {
-        return config('app.insanityId') . ":" . $this->id . ":" . $this->title;
+        return config('insanity.insanityId') . ":" . $this->id . ":" . $this->title;
     }
 
     public function getSanityProjectNamePrefixAttribute()
     {
-        return config('app.insanityId') . ":" . $this->id . ":";
+        return config('insanity.insanityId') . ":" . $this->id . ":";
     }
 
     public function getSanityStudioHostAttribute()
     {
-        return config('app.insanityId') . '-studio-' . $this->sanity_project_id;
+        return config('insanity.insanityId') . '-studio-' . $this->sanity_project_id;
     }
 }

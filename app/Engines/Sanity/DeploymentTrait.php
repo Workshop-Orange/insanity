@@ -114,9 +114,9 @@ trait DeploymentTrait {
     $path = Storage::path($deploymentConfigPath);
 
     $cwd = getcwd();
-    chdir("/Users/bryan/Projects/insanity/robo");
+    chdir($this->roboWorkingPath);
 
-    $cmd = "/Users/bryan/.composer/vendor/bin/robo sanity:deploy " . $path;
+    $cmd = $this->roboPath . " sanity:deploy " . $path;
     $process = proc_open($cmd, array(0 => STDIN, 1 => STDOUT, 2 => STDERR), $pipes);
     $proc_status = proc_get_status($process);
     $exit_code = proc_close($process);

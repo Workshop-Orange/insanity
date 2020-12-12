@@ -12,8 +12,8 @@ class SanityEngineApi
   protected $token;
   protected $insanityId;
 
-  public function __construct($insanityId) {
-    $this->insanityId = $insanityId;
+  public function __construct($config) {
+    $this->insanityId = $config['insanityId'];
   }
 
   public function apiToken($apiToken)

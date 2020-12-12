@@ -16,11 +16,11 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(SanityEngine::class, function ($app) {
-            return new SanityEngine(config('app.insanityId'));
+            return new SanityEngine(config('insanity'));
         });
 
         $this->app->bind(SanityEngineApi::class, function ($app) {
-            return new SanityEngineApi(config('app.insanityId'));
+            return new SanityEngineApi(config('insanity'));
         });
     }
 
