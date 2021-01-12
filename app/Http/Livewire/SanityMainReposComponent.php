@@ -6,15 +6,16 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use App\Models\SanityMainRepo;
 use App\Engines\SanityEngine;
+use Illuminate\Http\Request;
 
 class SanityMainReposComponent extends Component
 {
     public $repos, $title, $git, $branch, $sanity_main_repo_id;
     public $isOpen = 0;
 
-    public function render()
+    public function render(Request $request)
     {
-        $this->repos = SanityMainRepo::all();
+        $this->repos = $request->user()->currentTeam->sanityMainRepos;
         return view('livewire.sanity-main-repos');
     }
 
