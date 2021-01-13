@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Jetstream\Team;
-
 
 class SanityDeployment extends Model
 {
@@ -38,7 +36,7 @@ class SanityDeployment extends Model
 
     public function team()
     {
-        return $this->belognsTo(Team::class);
+        return $this->belongsTo(Team::class);
     }
 
     public function getSanityProjectNameAttribute()

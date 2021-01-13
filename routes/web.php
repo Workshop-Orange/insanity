@@ -16,13 +16,9 @@ use App\Models\SanityMainRepo;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->get('/', function () {
+    return redirect()->route('sanityMainRepos');
+})->name('home');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/sanity-main-repos', SanityMainReposComponent::class)->name('sanityMainRepos');
 Route::middleware(['auth:sanctum', 'verified'])->get('/sanity-main-repo/{sanityMainRepo}', SanityMainRepoComponent::class)->name('sanityMainRepo');

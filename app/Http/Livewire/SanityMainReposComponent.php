@@ -7,9 +7,12 @@ use Livewire\Component;
 use App\Models\SanityMainRepo;
 use App\Engines\SanityEngine;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class SanityMainReposComponent extends Component
 {
+    use AuthorizesRequests;
+    
     public $repos, $title, $git, $branch, $sanity_main_repo_id;
     public $isOpen = 0;
 
@@ -43,9 +46,17 @@ class SanityMainReposComponent extends Component
     }
 
 
-    public function store()
+    public function store(Request $request)
     {
-        $user = Auth::user();
+        if($this->sanity_main_repo_id) {
+            $repo = SanityMainRepo::find($this->sanity_main_repo_id);
+            $this->authorize('update', $repo);
+        } else {
+            $this->authorize('create', SanityMainRepo::class);
+        }
+        
+        $user = $request->user();
+        
         $this->validate([
             'title' => 'required',
             'git' => 'required',
@@ -83,6 +94,8 @@ class SanityMainReposComponent extends Component
     public function edit($id)
     {
         $repo = SanityMainRepo::findOrFail($id);
+        $this->authorize('update', $repo);
+
         $this->sanity_main_repo_id = $id;
         $this->title = $repo->title;
         $this->git = $repo->git;
@@ -92,6 +105,9 @@ class SanityMainReposComponent extends Component
 
     public function delete($id)
     {
+        $repo = SanityMainRepo::find($id);
+        $this->authorize('delete', $repo);
+
         SanityMainRepo::find($id)->delete();
         session()->flash('message', 'Main Repo Deleted Successfully.');
     }

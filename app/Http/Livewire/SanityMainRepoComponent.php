@@ -8,10 +8,13 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\SanityMainRepo;
 use App\Models\SanityDeployment;
 use App\Engines\SanityEngine;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 
 class SanityMainRepoComponent extends Component
 {
+    use AuthorizesRequests;
+
     public $deployments, $title, $sanity_api_token, $sanity_deployment_id;
     public $sanityMainRepo;
     public $isOpen = 0;
@@ -31,6 +34,7 @@ class SanityMainRepoComponent extends Component
 
     public function render()
     {
+        $this->authorize('view', $this->sanityMainRepo);
         $this->deployments = $this->sanityMainRepo->sanityDeployments;
 
         return view('livewire.sanity-main-repo');
@@ -38,6 +42,8 @@ class SanityMainRepoComponent extends Component
 
     public function create()
     {
+        $this->authorize('create', SanityDeployment::class);
+
         $this->resetInputFields();
         $this->openModal();
     }
@@ -73,6 +79,13 @@ class SanityMainRepoComponent extends Component
             'sanity_api_token' => 'required',
         ]);
 
+        if($this->sanity_deployment_id) {
+            $deploy = SanityDeployment::find($this->sanity_deployment_id);
+            $this->authorize('update', $deploy);
+        } else {
+            $this->authorize('create', SanityDeployment::class);
+        }
+
         SanityDeployment::updateOrCreate(['id' => $this->sanity_deployment_id
         ], [
             'title' => $this->title,
@@ -106,6 +119,8 @@ class SanityMainRepoComponent extends Component
     public function edit($id)
     {
         $deploy = SanityDeployment::findOrFail($id);
+        $this->authorize('update', $deploy);
+
         $this->sanity_deployment_id = $id;
         $this->title = $deploy->title;
         $this->sanity_api_token = $deploy->sanity_api_token;
@@ -114,7 +129,10 @@ class SanityMainRepoComponent extends Component
 
     public function delete($id)
     {
-        SanityDeployment::find($id)->delete();
+        $deploy = SanityDeployment::findOrFail($id);
+        $this->authorize('delete', $deploy);
+
+        $deploy->delete();
         session()->flash('message', 'Deployment Deleted Successfully.');
         $this->sanityMainRepo->refresh();
     }
