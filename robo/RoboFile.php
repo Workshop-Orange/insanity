@@ -13,6 +13,8 @@ class RoboFile extends \Robo\Tasks
      */
     public function sanityDeploy($jsonDeployment)
     {
+	print "$jsonDeployment \n";
+
         if(!file_exists($jsonDeployment) || ! is_file($jsonDeployment))
         {
             $this->say('Deployment File Error: ' . $jsonDeployment);
@@ -103,6 +105,7 @@ class RoboFile extends \Robo\Tasks
         $sanityBaseConfig = json_decode(file_get_contents("sanity-base.json"), TRUE);
         $sanityBaseConfig['api']['projectId'] = $deployment['deployment']['sanity_project_id'];
         $sanityBaseConfig['api']['dataset'] = $deployment['deployment']['sanity_dataset'];
+        $sanityBaseConfig['project']['name'] = $deployment['deployment']['title'];
 
         $deployment['sanityAuthToken'] = 'SANITY_AUTH_TOKEN="' . $deployment['deployment']['sanity_api_token'] . '"';
 
