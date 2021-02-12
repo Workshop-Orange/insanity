@@ -11,6 +11,10 @@ api: api-lagoon-master.lagoon.ch.amazee.io:80
 tasks:
   post-rollout:
     - run:
+        name: Scaffold the persistent storage # no need to uncomment. safe to run multiple times
+        command: /app/scripts/post-deploy.sh
+        service: cli
+    - run:
         name: Run migrations 
         command: php artisan migrate
         service: cli
