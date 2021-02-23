@@ -5,7 +5,7 @@
 version: '2.3'
 
 x-lagoon-project:
-  &lagoon-project insanity
+  &lagoon-project wo-insanity
 
 x-volumes:
   &default-volumes
@@ -16,7 +16,7 @@ x-environment:
   &default-environment
     LAGOON_PROJECT: *lagoon-project
     # Route that should be used locally
-    LAGOON_ROUTE: http://insanity.docker.amazee.io
+    LAGOON_ROUTE: http://wo-insanity.docker.amazee.io
     # Uncomment if you like to have the system behave like in production
     #LAGOON_ENVIRONMENT_TYPE: production
     # Uncomment to enable xdebug and then restart via `docker-compose up -d`
